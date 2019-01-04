@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  nginx: 
+    build: ./nginx
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - web
+  db:
+    build: ./db
+    restart: always
+    expose:
+      - "3306"
+  rd:
+    image: redis
+    restart: always
+    expose:
+      - "6379"
+  web:
+    build: .
+    restart: always
+    depends_on:
+      - rd
+      - db

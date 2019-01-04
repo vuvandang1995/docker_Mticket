@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+  nginx: 
+    build: ./nginx
+    depends_on:
+      - web
+    volumes:
+      - ./static:/static
+      - ./media:/home/media
+    ports:
+      - "80:80"
+  db:
+    image: mysql:5.7
+    restart: always
+    expose:
+      - "3306"
+    volumes:
+      - ./dockermysql:/var/lib/mysql
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_DATABASE: vnpt_cuoi_cung
+      MYSQL_ROOT_PASSWORD: 1
+  rd:
+    image: redis
+    restart: always
+    expose:
+      - "6379"
+    volumes:
+      - ./dockerredis:/var/lib/redis
+  web:
+    build: .
+    volumes:
+      - ./mticket:/home/mticket
+      - ./static:/static
+      - ./media:/home/media
+    expose:
+      - "8000"
+      - "8001"
+    depends_on:
+      - rd
+      - db
